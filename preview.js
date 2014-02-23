@@ -1,5 +1,3 @@
-//2bcc326d72f54fd0b340e4ed52eab249
-
 var get_follows = function(username) {
 	var url = "http://api.twitch.tv/kraken/users/"+username+"/follows/channels";
 	console.log(url);
@@ -8,16 +6,14 @@ var get_follows = function(username) {
 		on_site: 1
 	})
 	.done(function( data ) {
-		console.log(data)
 	  $.each( data.follows, function( i, follow ) {
-	  	var list_el = 	"<li class='preview_li' data-channel_name="+follow.channel.display_name+" style='height=35px; position: relative;'> \
-	  						<a class='clearfix' href='#' style='line-height:22px;'> \
-	  							<span class='logo' style='display: inline-block;'><img src=" + follow.channel.logo + " height='25' width='25' style='margin-top: -8px; margin-left: 25px;'></img></span> \
+	  	var list_el = 	"<li class='preview_li'style='height=35px; position: relative;'> \
+	  						<a class='clearfix preview_link' href='#' data-channel_name="+follow.channel.display_name+" style='line-height:22px;'> \
+	  							<span class='logo' style='display: inline-block;'><img src=" + follow.channel.logo + " height='20' width='20' style='margin-top: -8px; margin-left: 25px;'></img></span> \
 	  							<span class='title' style='display: inline-block; margin-left: 10px; margin-top: 5px'>" + follow.channel.display_name + "</span> \
 	  						</a> \
 	  					</li>";
 	  	$(list_el).appendTo($("#channel_previews"));
-	    console.log(follow.channel.display_name);
 	  });
 	});
 };
@@ -34,35 +30,48 @@ var generate_embed = function(channel){
 };
 
 var popup_video = function(loc){
+	console.log("enabling popup");
 	$(".popup").remove();
-	$.embedly.extract('http://embed.ly', {key: '2bcc326d72f54fd0b340e4ed52eab249'}).progress(function(data){
-  		alert(data.title);
-	});
 	var offset = loc.offset().top;
-	var channel = loc.data("channel_name");
+	var url = "http://twitch.tv/"+loc.data('channel_name');
+
 	var box = 	"<div class='popup' style='position: absolute;padding: 20px 20px;border: 2px solid #333;background: #fff;left: 20px;top:"+offset+"px; z-index: 5;overflow: visible;'> \
-					<h3> "+loc.data("channel_name")+"</h3 \
-					" + generate_embed(channel) + " \
-				</div>";
+	 				<h3> "+loc.data("channel_name")+" (Preview) <span class='xout' style='float:right; cursor: pointer;'> X </span></h3> \
+	 				<div id='player'></div> \
+	 				<p> <a href='"+url+"'> Switch to this stream </a> </p> \
+	 			</div>";
 	$("#main_col").append(box);
+
+	var maxwidth = $('#popup div').width();
+
+	console.log(url)
+
+	//&auto_play=true&start_volume=25
+	$.embedly.oembed(url, {query: {maxwidth: maxwidth, auto_play: true, start_volume:0}})
+		.progress(function(obj){
+			console.log(obj);
+			$(".popup div").html(obj.html);			
+		});
+
+	return false;
 };
 
 $(document).ready(function(){
-	$("#nav").on("click", ".preview_li", function(){
+	$("#nav").on("click", ".preview_link", function(){
 		popup_video($(this));
 	});
+	$("#main_col").on("click", '.xout', function(){
+		$(".popup").remove();
+	});
 	if ($("#nav_personal").length > 0){
-		var follow_nav = 		"<script src='http://cdn.embed.ly/jquery.embedly-3.1.1.min.js' type='text/javascript'></script> \
-								<div class='nav_section js-nav-menu' id='nav_preview'> \
+		var follow_nav = 		"<div class='nav_section js-nav-menu' id='nav_preview'> \
 								<div class='header'>Preview</div> \
 								<ul class='game_filters' id = 'channel_previews'></ul> \
 								<div class='nav-divider'></div> \
 							</div>";
 		$("#nav_primary").before(follow_nav);
 		var username = get_username();
-		console.log(username);
 		get_follows(username);
-		console.log(generate_embed());
 	}
 	else{
 		alert("Please log in to use twitch preview");
