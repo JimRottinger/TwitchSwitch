@@ -33,7 +33,7 @@ var popup_video = function(loc){
 	console.log("enabling popup");
 	$(".popup").remove();
 	var offset = loc.offset().top;
-	var url = "http://twitch.tv/"+loc.data('channel_name')+"?auto_play=true&start_volume=0";
+	var url = "http://twitch.tv/"+loc.data('channel_name');
 
 	var box = 	"<div class='popup' style='position: absolute;padding: 20px 20px;border: 2px solid #333;background: #fff;left: 20px;top:"+offset+"px; z-index: 5;overflow: visible;'> \
 	 				<h3> "+loc.data("channel_name")+" (Preview) <span class='xout' style='float:right; cursor: pointer;'> X </span></h3> \
