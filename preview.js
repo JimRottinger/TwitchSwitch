@@ -1,3 +1,5 @@
+//2bcc326d72f54fd0b340e4ed52eab249
+
 var get_follows = function(username) {
 	var url = "http://api.twitch.tv/kraken/users/"+username+"/follows/channels";
 	console.log(url);
@@ -25,16 +27,24 @@ var get_username = function(){
 };
 
 var generate_embed = function(channel){
-	return "<object type='application/x-shockwave-flash' height='378' width='620' id='live_embed_player_flash' data='http://www.twitch.tv/widgets/live_embed_player.swf?channel="+channel+"' bgcolor='#000000'><param name='allowFullScreen' value='true' /><param name='allowScriptAccess' value='always' /><param name='allowNetworking' value='all' /><param name='movie' value='http://www.twitch.tv/widgets/live_embed_player.swf' /><param name='flashvars' value='hostname=www.twitch.tv&channel="+channel+"&auto_play=true&start_volume=25' /></object><a href='http://www.twitch.tv/"+channel+"' style='padding:2px 0px 4px; display:block; width:345px; font-weight:normal; font-size:10px;text-decoration:underline; text-align:center;''>Watch live video from "+ channel + " on www.twitch.tv</a>";
+	return "<object type='application/x-shockwave-flash' height='378' width='620' id='live_embed_player_flash' data='http://www.twitch.tv/widgets/live_embed_player.swf?channel="+channel+"' bgcolor='#000000'><param name='allowFullScreen' value='true' /><param name='allowScriptAccess' value='always' /><param name='allowNetworking' value='all' /><param name='movie' value='http://www.twitch.tv/widgets/live_embed_player.swf' /><param name='flashvars' value='hostname=www.twitch.tv&channel="+channel+"&auto_play=true&start_volume=25' /></object>";
+	//return "<iframe id='player' type='text/html' width='620' height='378' \
+  	//		src='http://www.twitch.tv/"+channel+"/hls' \
+  	//		frameborder='0'></iframe>"
 };
 
 var popup_video = function(loc){
 	$(".popup").remove();
-	console.log(loc.data("channel_name"));
-	var box = 	"<div class='popup' style='position: absolute;border: 2px solid #333;background: #fff;right: -50px;top:0; z-index: 5;overflow: visible;'> \
-					<h3> hello world </h3 \
+	$.embedly.extract('http://embed.ly', {key: '2bcc326d72f54fd0b340e4ed52eab249'}).progress(function(data){
+  		alert(data.title);
+	});
+	var offset = loc.offset().top;
+	var channel = loc.data("channel_name");
+	var box = 	"<div class='popup' style='position: absolute;padding: 20px 20px;border: 2px solid #333;background: #fff;left: 20px;top:"+offset+"px; z-index: 5;overflow: visible;'> \
+					<h3> "+loc.data("channel_name")+"</h3 \
+					" + generate_embed(channel) + " \
 				</div>";
-	loc.append(box);
+	$("#main_col").append(box);
 };
 
 $(document).ready(function(){
@@ -42,7 +52,8 @@ $(document).ready(function(){
 		popup_video($(this));
 	});
 	if ($("#nav_personal").length > 0){
-		var follow_nav = 	"<div class='nav_section js-nav-menu' id='nav_preview'> \
+		var follow_nav = 		"<script src='http://cdn.embed.ly/jquery.embedly-3.1.1.min.js' type='text/javascript'></script> \
+								<div class='nav_section js-nav-menu' id='nav_preview'> \
 								<div class='header'>Preview</div> \
 								<ul class='game_filters' id = 'channel_previews'></ul> \
 								<div class='nav-divider'></div> \

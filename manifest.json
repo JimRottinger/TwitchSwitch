@@ -4,9 +4,6 @@
 	"name": "TwitchPreview",
 	"description": "Allows previews of twitch channels from another stream's page",
 	"version": "1.0",
-	// "background": {
-	// 	"scripts": ["preview.js"]
-	// },
 	"content_scripts": [
 	{
 		"matches": ["*://*.twitch.tv/*"],
