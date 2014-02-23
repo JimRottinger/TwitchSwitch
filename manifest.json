@@ -1,7 +1,7 @@
 {
 	"manifest_version": 2,
 
-	"name": "TwitchPreview",
+	"name": "TwitchSwitch",
 	"description": "Allows previews of twitch channels from another stream's page",
 	"version": "1.0",
 	"content_scripts": [
