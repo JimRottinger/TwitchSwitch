@@ -11,18 +11,27 @@ JSON.load = function(url, callback) {
     request.send();
 };
 
+/** Draws the link into the sidebar for every followed user */
+function draw_preview_link(channel){
+	var li = "<li class='preview_li' style='height=35px; position: relative;'>";
+    var a = "<a class='clearfix preview_link game' href='#' data-channel_name="+channel.display_name+">";
+    var img = "<img src="+channel.logo+" height=20 width=20 class='image' />";
+    var span = "<span class='title'>"+channel.display_name+"</span>";
+    return li + a + img + span + "</a></li>";
+}
+
 /** Obtains the channels followed by a user and adds them to the 'channel_previews' nav item */
 function insert_user_follows_into_page(username) {
     var url = "http://api.twitch.tv/kraken/users/"+username+"/follows/channels?limit=24&offset=0&on_site=1";
     JSON.load(url, function(data) {
-        for (var i = 0; i < data.follows.length; i++) {
+    	var i;
+    	for (i=0; i < 5; i++){
+    		var channel = data.follows[i].channel;
+            document.getElementById("channel_previews").innerHTML += draw_preview_link(channel);
+    	}
+        for (; i < data.follows.length; i++) {
             var channel = data.follows[i].channel;
-            var li = "<li class='preview_li' style='height=35px; position: relative;'>";
-            var a = "<a class='clearfix preview_link game' href='#' data-channel_name="+channel.display_name+">";
-            var img = "<img src="+channel.logo+" height=20 width=20 class='image' />";
-            var span = "<span class='title'>"+channel.display_name+"</span>";
-            var element = li + a + img + span + "</a></li>";
-            document.getElementById("channel_previews").innerHTML += element;
+            document.getElementById("extra_previews").innerHTML += draw_preview_link(channel);
         }
     });
 }
@@ -77,12 +86,24 @@ $("#nav").on("click", ".preview_link", function(){
 $("#main_col").on("click", '.xout', function(){
 	$(".popup").remove();
 });
+// dropdown extea prewview links on click of 
+$("#nav").on("click", "#preview_dropdown_link", function(){
+	$("#extra_previews").css("height", "auto");
+	$("#preview_dropdown_link").removeClass("collapsed").addClass("expanded");
+});
+// collapses the dropdown for the preview links
+$("#nav").on("click", ".left-col-dropdown.expanded", function(){
+	$("#extra_previews").css("height", "0px");
+	$("#preview_dropdown_link").removeClass("expanded").addClass("collapsed");
+})
 
 var username = get_username();
 if (username) {
 	var follow_nav = 		"<div class='nav_section js-nav-menu' id='nav_preview'> \
 							<div class='header'>Preview</div> \
 							<ul class='game_filters' id = 'channel_previews'></ul> \
+							<ul class='extra-menu' id='extra_previews'></ul> \
+							<div class='left-col-dropdown collapsed' id='preview_dropdown_link'></div> \
 							<div class='nav-divider'></div> \
 						</div>";
 	$("#nav_primary").before(follow_nav);
