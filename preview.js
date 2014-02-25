@@ -78,29 +78,30 @@ function filter_follows_online(channels, callback) {
     JSON.load(url, handler);
 }
 
-/** Obtains the channels followed by a user and adds them to the 'channel_previews' nav item */
+/** Updates the 'channel_previews' nav item with the listed channels */
 function insert_follows_into_page(channels) {
     var i;
+    var list = document.getElementById("channel_previews");
+    var blist = document.getElementById("extra_previews");
+    while (blist.firstChild) blist.removeChild(list.firstChild);
+    while (list.firstChild) list.removeChild(list.firstChild);
+    document.getElementById("preview_dropdown_link").style.display='none';
     if (channels.length == 0){
         var li = document.createElement("li");
         li.style.textAlign = "center";
-        li.appendChild(document.createTextNode("No followed streams"));
+        li.appendChild(document.createTextNode("No followed streams are online"));
         document.getElementById("channel_previews").appendChild(li);
-    	document.getElementById("preview_dropdown_link").style.display='none';
     }
     else if (channels.length > 5){
-	for (i=0; i < 5; i++){
+	for (i=0; i < 5; i++)
             document.getElementById("channel_previews").appendChild(draw_preview_link(channels[i]));
-	}
-	for (; i < channels.length; i++) {
+	for (; i < channels.length; i++)
             document.getElementById("extra_previews").appendChild(draw_preview_link(channels[i]));
-	}
+    document.getElementById("preview_dropdown_link").style.display='';
     }
     else{
-	for (i=0; i < channels.length; i++) {
+	for (i=0; i < channels.length; i++)
             document.getElementById("channel_previews").appendChild(draw_preview_link(channels[i]));
-	}
-	document.getElementById("preview_dropdown_link").style.display='none';
     }
 }
 
@@ -184,21 +185,25 @@ if (username) {
 							<div class='header'>Preview</div> \
 							<ul class='game_filters' id = 'channel_previews'></ul> \
 							<ul class='extra-menu' id='extra_previews'></ul> \
-							<div class='left-col-dropdown collapsed' id='preview_dropdown_link'></div> \
+							<div class='left-col-dropdown collapsed' id='preview_dropdown_link' style='display:none;'></div> \
 							<div class='nav-divider'></div> \
 						</div>";
 	$("#nav_primary").before(follow_nav);
-    var url = "http://api.twitch.tv/kraken/users/"+username+"/follows/channels?limit=24&offset=0&on_site=1";
-    get_follows(username, function(follows) {
-        // only filter for a small number to save the API
-        if (follows.length < 75) {
-            filter_follows_online(follows, function(filtered) {
+    (function update() {
+        var url = "http://api.twitch.tv/kraken/users/"+username+"/follows/channels?limit=24&offset=0&on_site=1";
+        get_follows(username, function(follows) {
+            // only filter for a small number to save the API
+            if (follows.length < 75) {
+                filter_follows_online(follows, function(filtered) {
+                    insert_follows_into_page(filtered);
+                });
+            } else {
                 insert_follows_into_page(filtered);
-            });
-        } else {
-            insert_follows_into_page(filtered);
-        }
-    });
+            }
+        });
+        // re-update every _ milliseconds
+        window.setTimeout(update, 30000);
+    })();
 } else {
 	console.log("TwitchSwitch: Could not get username (is a user logged in?)");
 }
