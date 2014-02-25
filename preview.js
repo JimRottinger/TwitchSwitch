@@ -25,10 +25,12 @@ function insert_user_follows_into_page(username) {
     var url = "http://api.twitch.tv/kraken/users/"+username+"/follows/channels?limit=24&offset=0&on_site=1";
     JSON.load(url, function(data) {
     	var i;
+    	//initial 5 preview links
     	for (i=0; i < 5; i++){
     		var channel = data.follows[i].channel;
             document.getElementById("channel_previews").innerHTML += draw_preview_link(channel);
     	}
+    	//loads extra preview links into the collapsed list
         for (; i < data.follows.length; i++) {
             var channel = data.follows[i].channel;
             document.getElementById("extra_previews").innerHTML += draw_preview_link(channel);
