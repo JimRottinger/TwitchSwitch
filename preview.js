@@ -68,18 +68,15 @@ var popup_video = function(loc){
 	return false;
 };
 
-$(document).ready(function(){
-	$("#nav").on("click", ".preview_link", function(){
-		popup_video($(this));
-	});
-	$("#main_col").on("click", '.xout', function(){
-		$(".popup").remove();
-	});
+$("#nav").on("click", ".preview_link", function(){
+	popup_video($(this));
+});
+$("#main_col").on("click", '.xout', function(){
+	$(".popup").remove();
+});
 
-	if (!document.getElementById("#nav_personal") || !get_username())
-		console.log("TwitchSwitch: Could not get username (is a user logged in?)");
-
-	var username = get_username();
+var username = get_username();
+if (username) {
 	var follow_nav = 		"<div class='nav_section js-nav-menu' id='nav_preview'> \
 							<div class='header'>Preview</div> \
 							<ul class='game_filters' id = 'channel_previews'></ul> \
@@ -87,4 +84,6 @@ $(document).ready(function(){
 						</div>";
 	$("#nav_primary").before(follow_nav);
 	get_follows(username);
-});
+} else {
+	console.log("TwitchSwitch: Could not get username (is a user logged in?)");
+}
