@@ -11,6 +11,7 @@ JSON.load = function(url, callback) {
     request.send();
 };
 
+(function(){
 /** Draws the link into the sidebar for every followed user */
 function draw_preview_link(channel){
 	var li = "<li class='preview_li' style='height=35px; position: relative;'>";
@@ -55,7 +56,7 @@ function get_username() {
     var elements = document.getElementById("you").getElementsByClassName("username");
     if (elements.length == 0)
         return undefined;
-    return elements[0].innerText;
+    return elements[0].textContent;
 }
 
 var generate_embed_object_for_stream = function(channel){
@@ -103,7 +104,7 @@ $("#nav").on("click", "#preview_dropdown_link", function(){
 $("#nav").on("click", ".left-col-dropdown.expanded", function(){
 	$("#extra_previews").css("height", "0px");
 	$("#preview_dropdown_link").removeClass("expanded").addClass("collapsed");
-})
+});
 
 var username = get_username();
 if (username) {
@@ -119,3 +120,4 @@ if (username) {
 } else {
 	console.log("TwitchSwitch: Could not get username (is a user logged in?)");
 }
+})();
