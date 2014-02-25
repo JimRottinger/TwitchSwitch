@@ -8,7 +8,7 @@
 	"content_scripts": [
 	{
 		"matches": ["*://*.twitch.tv/*"],
-		"js": ["jquery.min.js", "scriptTagContext.js", "embedly.min.js", "preview.js"]
+		"js": ["libs/jquery.min.js", "libs/scriptTagContext.js", "libs/embedly.min.js", "preview.js"]
 	}],
         "icons": { "16" : "icons/icon_16.png",
                    "48" : "icons/icon_48.png",
