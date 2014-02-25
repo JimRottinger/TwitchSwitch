@@ -56,7 +56,7 @@ function get_username() {
     var elements = document.getElementById("you").getElementsByClassName("username");
     if (elements.length == 0)
         return undefined;
-    return elements[0].innerText;
+    return elements[0].textContent;
 }
 
 var generate_embed = function(channel){
