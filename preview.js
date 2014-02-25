@@ -12,7 +12,7 @@ JSON.load = function(url, callback) {
 };
 
 /** Obtains the channels followed by a user and adds them to the 'channel_previews' nav item */
-function get_follows(username) {
+function insert_user_follows_into_page(username) {
     var url = "http://api.twitch.tv/kraken/users/"+username+"/follows/channels?limit=24&offset=0&on_site=1";
     JSON.load(url, function(data) {
         for (var i = 0; i < data.follows.length; i++) {
@@ -42,6 +42,7 @@ var generate_embed = function(channel){
 	return "<object type='application/x-shockwave-flash' height='378' width='620' id='live_embed_player_flash' data='http://www.twitch.tv/widgets/live_embed_player.swf?channel="+channel+"' bgcolor='#000000'><param name='allowFullScreen' value='true' /><param name='allowScriptAccess' value='always' /><param name='allowNetworking' value='all' /><param name='movie' value='http://www.twitch.tv/widgets/live_embed_player.swf' /><param name='flashvars' value='hostname=www.twitch.tv&channel="+channel+"&auto_play=true&start_volume=25' /></object>";
 };*/
 
+/** Pops up the video related to the myserious 'loc' object */
 var popup_video = function(loc){
 	console.log("enabling popup");
 	$(".popup").remove();
@@ -57,7 +58,7 @@ var popup_video = function(loc){
 
 	var maxwidth = $('#popup div').width();
 
-	console.log(url)
+	console.log(url);
 
 	$.embedly.oembed(url, {query: {maxwidth: maxwidth, autoplay: true}})
 		.progress(function(obj){
@@ -68,23 +69,24 @@ var popup_video = function(loc){
 	return false;
 };
 
-$(document).ready(function(){
-	$("#nav").on("click", ".preview_link", function(){
-		popup_video($(this));
-	});
-	$("#main_col").on("click", '.xout', function(){
-		$(".popup").remove();
-	});
+// popup a video when a preview_link is clicked
+$("#nav").on("click", ".preview_link", function(){
+	popup_video($(this));
+});
+// remove a popup when its xout is clicked
+$("#main_col").on("click", '.xout', function(){
+	$(".popup").remove();
+});
 
-	if (!document.getElementById("#nav_personal") || !get_username())
-		console.log("TwitchSwitch: Could not get username (is a user logged in?)");
-
-	var username = get_username();
+var username = get_username();
+if (username) {
 	var follow_nav = 		"<div class='nav_section js-nav-menu' id='nav_preview'> \
 							<div class='header'>Preview</div> \
 							<ul class='game_filters' id = 'channel_previews'></ul> \
 							<div class='nav-divider'></div> \
 						</div>";
 	$("#nav_primary").before(follow_nav);
-	get_follows(username);
-});
+	insert_user_follows_into_page(username);
+} else {
+	console.log("TwitchSwitch: Could not get username (is a user logged in?)");
+}
