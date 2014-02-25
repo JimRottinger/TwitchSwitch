@@ -14,13 +14,32 @@ JSON.load = function(url, callback) {
 (function(){
 /** Draws the link into the sidebar for every followed user */
 function draw_preview_link(channel){
-    if (!channel.logo)
-        channel.logo = "http://static-cdn.jtvnw.net/jtv_user_pictures/xarth/404_user_150x150.png";
-    var li = "<li class='preview_li' style='height=35px; position: relative;'>";
-    var a = "<a class='clearfix preview_link game' href='#' data-channel_name="+channel.name+" data-channel_dname="+channel.display_name+">";
-    var img = "<img src="+channel.logo+" height=20 width=20 class='image' />";
-    var span = "<span class='title'>"+channel.display_name+"</span>";
-    return li + a + img + span + "</a></li>";
+    // create the list element
+    var li = document.createElement("li");
+    li.id = "preview_" + channel.name;
+    // create the link to catch any preview clicks
+    var a = document.createElement("a");
+    a.id = "preview_link_" + channel.name;
+    a.className = "game";
+    a.href = "#";
+    a.setAttribute("data-channel_name", channel.name);
+    a.setAttribute("data-channel_dname", channel.display_name);
+    a.addEventListener("click", function(event) {
+	popup_video($("#preview_link_" + channel.name));
+    });
+    // add the image
+    var img = document.createElement("img");
+    img.className = "image";
+    img.src = channel.logo ? channel.logo : "http://static-cdn.jtvnw.net/jtv_user_pictures/xarth/404_user_150x150.png";
+    // add the name of the stream
+    var span = document.createElement("span");
+    span.className = "title";
+    span.appendChild(document.createTextNode(channel.display_name));
+    // join everything together
+    a.appendChild(img);
+    a.appendChild(span);
+    li.appendChild(a);
+    return li;
 }
 
 /** Obtains a list of channels followed by a user */
@@ -63,21 +82,23 @@ function filter_follows_online(channels, callback) {
 function insert_follows_into_page(channels) {
     var i;
     if (channels.length == 0){
-    	var li = "<li class='preview_li' style='height=35px; position: relative; margin-left: 30px;'> No followed streams </li>";
-    	document.getElementById("channel_previews").innerHTML += li;
+        var li = document.createElement("li");
+        li.style.textAlign = "center";
+        li.appendChild(document.createTextNode("No followed streams"));
+        document.getElementById("channel_previews").appendChild(li);
     	document.getElementById("preview_dropdown_link").style.display='none';
     }
     else if (channels.length > 5){
 	for (i=0; i < 5; i++){
-	    document.getElementById("channel_previews").innerHTML += draw_preview_link(channels[i]);
+            document.getElementById("channel_previews").appendChild(draw_preview_link(channels[i]));
 	}
 	for (; i < channels.length; i++) {
-	    document.getElementById("extra_previews").innerHTML += draw_preview_link(channels[i]);
+            document.getElementById("extra_previews").appendChild(draw_preview_link(channels[i]));
 	}
     }
     else{
 	for (i=0; i < channels.length; i++) {
-	    document.getElementById("channel_previews").innerHTML += draw_preview_link(channels[i]);
+            document.getElementById("channel_previews").appendChild(draw_preview_link(channels[i]));
 	}
 	document.getElementById("preview_dropdown_link").style.display='none';
     }
@@ -102,28 +123,46 @@ var generate_embed_object_for_stream = function(channel){
 
 /** Pops up the video next to the preview link that was clicked */
 var popup_video = function(preview_clicked){
-	console.log("enabling popup");
-	$(".popup").remove();
-	var offset = preview_clicked.offset().top;
-	if (offset+256 > window.innerHeight)
-		offset = window.innerHeight - 256;
-	if (offset < 0)
-		offset = 0;
-	var channel_name = preview_clicked.data('channel_name');
-        var channel_dname = preview_clicked.data('channel_dname');
-	var url = "http://twitch.tv/"+channel_name;
-	var box = 	"<div class='popup' id='popup' style='position: absolute;padding:12px;border:2px solid #333;background:#fff;left:0px;top:"+offset+"px; z-index:5;overflow:visible;'> \
-	 				<span class='xout' style='position:absolute;top:1ex;right:1ex;font-weight:bold;cursor:pointer;'>X</span>\
-	 				<h3><a href="+url+">"+channel_dname+"</a> (Preview)</h3> \
-	 				<div id='player'>"+generate_embed_object_for_stream(channel_name)+"</div> \
-	 			</div>";
-	$("#main_col").append(box);
+    if (document.getElementById("popup"))
+        document.getElementById("main_col").removeChild(document.getElementById("popup"));
+    var offset = preview_clicked.offset().top;
+    if (offset+256 > window.innerHeight)
+	offset = window.innerHeight - 256;
+    if (offset < 0)
+	offset = 0;
+    var channel_name = preview_clicked.data('channel_name');
+    var channel_dname = preview_clicked.data('channel_dname');
+    var url = "http://twitch.tv/"+channel_name;
+    // create a popup element to display the channel preview
+    var popup = document.createElement("div");
+    popup.id = "popup";
+    popup.className = "popup";
+    popup.style.cssText = "position:absolute;padding:12px;border:2px solid #333;background:#fff;left:0px;top:"+offset+"px;z-index:5;";
+    // create an 'x' button to close the popup
+    var span = document.createElement("span");
+    span.style.cssText = "position:absolute;top:1ex;right:1ex;font-weight:bold;cursor:pointer;";
+    span.appendChild(document.createTextNode("X"));
+    span.addEventListener("click", function(event) {
+        document.getElementById("main_col").removeChild(document.getElementById("popup"));
+    });
+    // create the header, displaying the channel name and a link to it
+    var h3 = document.createElement("h3");
+    var a = document.createElement("a");
+    a.href = url;
+    a.appendChild(document.createTextNode(channel_dname));
+    h3.appendChild(a);
+    h3.appendChild(document.createTextNode(" (Preview)"));
+    // create the player object
+    var player = document.createElement("div");
+    player.id = player;
+    player.innerHTML = generate_embed_object_for_stream(channel_name);
+    // place the popup on screen
+    popup.appendChild(span);
+    popup.appendChild(h3);
+    popup.appendChild(player);
+    document.getElementById("main_col").appendChild(popup);
 };
 
-// popup a video when a preview_link is clicked
-$("#nav").on("click", ".preview_link", function(){
-	popup_video($(this));
-});
 // remove a popup when its xout is clicked
 $("#main_col").on("click", '.xout', function(){
 	$(".popup").remove();
@@ -152,7 +191,7 @@ if (username) {
     var url = "http://api.twitch.tv/kraken/users/"+username+"/follows/channels?limit=24&offset=0&on_site=1";
     get_follows(username, function(follows) {
         // only filter for a small number to save the API
-        if (follows.length < 5) {
+        if (follows.length < 75) {
             filter_follows_online(follows, function(filtered) {
                 insert_follows_into_page(filtered);
             });
