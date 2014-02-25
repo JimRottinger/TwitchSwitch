@@ -13,8 +13,7 @@ JSON.load = function(url, callback) {
 
 /** Obtains the channels followed by a user and adds them to the 'channel_previews' nav item */
 function get_follows(username) {
-    var url = "http://api.twitch.tv/kraken/users/"+username+"/follows/channels";
-    url = "http://api.twitch.tv/kraken/users/goakley/follows/channels?limit=24&offset=0&on_site=1";
+    var url = "http://api.twitch.tv/kraken/users/"+username+"/follows/channels?limit=24&offset=0&on_site=1";
     JSON.load(url, function(data) {
         for (var i = 0; i < data.follows.length; i++) {
             var channel = data.follows[i].channel;
