@@ -73,19 +73,16 @@ $(document).ready(function(){
 	$("#main_col").on("click", '.xout', function(){
 		$(".popup").remove();
 	});
-	if ($("#nav_personal").length > 0){
-		var follow_nav = 		"<div class='nav_section js-nav-menu' id='nav_preview'> \
-								<div class='header'>Preview</div> \
-								<ul class='game_filters' id = 'channel_previews'></ul> \
-								<div class='nav-divider'></div> \
-							</div>";
-		$("#nav_primary").before(follow_nav);
-		var username = get_username();
-		if (!username)
-			return;
-		get_follows(username);
-	}
-	else{
-		alert("Please log in to use twitch preview");
-	}
+
+	if (!document.getElementById("#nav_personal") || !get_username())
+		console.log("TwitchSwitch: Could not get username (is a user logged in?)");
+
+	var username = get_username();
+	var follow_nav = 		"<div class='nav_section js-nav-menu' id='nav_preview'> \
+							<div class='header'>Preview</div> \
+							<ul class='game_filters' id = 'channel_previews'></ul> \
+							<div class='nav-divider'></div> \
+						</div>";
+	$("#nav_primary").before(follow_nav);
+	get_follows(username);
 });
