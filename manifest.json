@@ -4,7 +4,7 @@
 
 	"name": "TwitchSwitch",
 	"description": "Allows previews of twitch channels from another stream's page",
-	"version": "1.0",
+	"version": "1.1.0",
 	"content_scripts": [
 	{
 		"matches": ["*://*.twitch.tv/*"],
