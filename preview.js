@@ -62,7 +62,7 @@ var popup_video = function(preview_clicked){
 	var channel_name = preview_clicked.data('channel_name');
 	var url = "http://twitch.tv/"+channel_name;
 	var box = 	"<div class='popup' id='popup' style='position: absolute;padding:12px;border:2px solid #333;background:#fff;left:0px;top:"+offset+"px; z-index:5;overflow:visible;'> \
-	 				<span class='xout' style='position:absolute;top:1ex;right:1ex;font-weight:bold;'>X</span>\
+	 				<span class='xout' style='position:absolute;top:1ex;right:1ex;font-weight:bold;cursor:pointer;'>X</span>\
 	 				<h3><a href="+url+">"+channel_name+"</a> (Preview)</h3> \
 	 				<div id='player'>"+generate_embed(channel_name)+"</div> \
 	 			</div>";
