@@ -18,11 +18,10 @@ function insert_user_follows_into_page(username) {
         for (var i = 0; i < data.follows.length; i++) {
             var channel = data.follows[i].channel;
             var li = "<li class='preview_li' style='height=35px; position: relative;'>";
-            var a = "<a class='clearfix preview_link' href='#' data-channel_name="+channel.display_name+" style='line-height:22px;'>";
-            var span1 = "<span class='logo' style='display:inline-block;'>";
-            var img = "<img src="+channel.logo+" height=20 width=20 style='margin-top:-8px;margin-left:25px;'>";
-            var span2 = "<span class='title' style='display: inline-block; margin-left: 10px; margin-top: 5px'>"+channel.display_name;
-            var element = li + a + span1 + img + "</img></span>" + span2 + "</span></a></li>";
+            var a = "<a class='clearfix preview_link game' href='#' data-channel_name="+channel.display_name+">";
+            var img = "<img src="+channel.logo+" height=20 width=20 class='image' />";
+            var span = "<span class='title'>"+channel.display_name+"</span>";
+            var element = li + a + img + span + "</a></li>";
             document.getElementById("channel_previews").innerHTML += element;
         }
     });
