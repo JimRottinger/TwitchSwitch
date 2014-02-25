@@ -49,7 +49,7 @@ var popup_video = function(preview_clicked){
 	var box = 	"<div class='popup' style='position: absolute;padding:12px;border:2px solid #333;background:#fff;left:20px;top:"+offset+"px; z-index:5;overflow:visible;'> \
 	 				<span class='xout' style='position:absolute;top:1ex;right:1ex;font-weight:bold;'>X</span>\
 	 				<h3><a href="+url+">"+channel_name+"</a> (Preview)</h3> \
-	 				<div id='player'>"+ generate_embed(loc.data('channel_name')) +"</div> \
+	 				<div id='player'>"+generate_embed(channel_name)+"</div> \
 	 			</div>";
 	$("#main_col").append(box);
 };
