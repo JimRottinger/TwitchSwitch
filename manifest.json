@@ -24,8 +24,6 @@
             "default_title": "TwitchSwitch"
   	},
   	"permissions": [
-        "declarativeContent",
-        "*://*.embed.ly/*",
-        "https://api.github.com/users/Rob--W*"
-    ]
+            "declarativeContent"
+  	]
 }
