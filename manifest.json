@@ -5,6 +5,10 @@
 	"name": "TwitchSwitch",
 	"description": "Allows previews of twitch channels from another stream's page",
 	"version": "1.1.0",
+	"background": {
+		"scripts": ["background.js"],
+		"persistent": false
+	},
 	"content_scripts": [
 	{
 		"matches": ["*://*.twitch.tv/*"],
@@ -20,6 +24,7 @@
             "default_title": "TwitchSwitch"
   	},
   	"permissions": [
+        "declarativeContent",
         "*://*.embed.ly/*",
         "https://api.github.com/users/Rob--W*"
     ]
