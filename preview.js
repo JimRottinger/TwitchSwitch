@@ -24,9 +24,6 @@ var get_username = function(){
 
 var generate_embed = function(channel){
 	return "<object type='application/x-shockwave-flash' height='378' width='620' id='live_embed_player_flash' data='http://www.twitch.tv/widgets/live_embed_player.swf?channel="+channel+"' bgcolor='#000000'><param name='allowFullScreen' value='true' /><param name='allowScriptAccess' value='always' /><param name='allowNetworking' value='all' /><param name='movie' value='http://www.twitch.tv/widgets/live_embed_player.swf' /><param name='flashvars' value='hostname=www.twitch.tv&channel="+channel+"&auto_play=true&start_volume=25' /></object>";
-	//return "<iframe id='player' type='text/html' width='620' height='378' \
-  	//		src='http://www.twitch.tv/"+channel+"/hls' \
-  	//		frameborder='0'></iframe>"
 };
 
 var popup_video = function(loc){
@@ -46,7 +43,6 @@ var popup_video = function(loc){
 
 	console.log(url)
 
-	//&auto_play=true&start_volume=25
 	$.embedly.oembed(url, {query: {maxwidth: maxwidth, autoplay: true}})
 		.progress(function(obj){
 			console.log(obj);
