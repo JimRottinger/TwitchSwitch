@@ -42,15 +42,16 @@ var generate_embed = function(channel){
 	return "<object type='application/x-shockwave-flash' height='378' width='620' id='live_embed_player_flash' data='http://www.twitch.tv/widgets/live_embed_player.swf?channel="+channel+"' bgcolor='#000000'><param name='allowFullScreen' value='true' /><param name='allowScriptAccess' value='always' /><param name='allowNetworking' value='all' /><param name='movie' value='http://www.twitch.tv/widgets/live_embed_player.swf' /><param name='flashvars' value='hostname=www.twitch.tv&channel="+channel+"&auto_play=true&start_volume=25' /></object>";
 };*/
 
-/** Pops up the video related to the myserious 'loc' object */
-var popup_video = function(loc){
+/** Pops up the video next to the preview link that was clicked */
+var popup_video = function(preview_clicked){
 	console.log("enabling popup");
 	$(".popup").remove();
-	var offset = loc.offset().top;
-	var url = "http://twitch.tv/"+loc.data('channel_name');
+	var offset = preview_clicked.offset().top;
+	var channel_name = preview_clicked.data('channel_name');
+	var url = "http://twitch.tv/"+channel_name;
 
 	var box = 	"<div class='popup' style='position: absolute;padding: 20px 20px;border: 2px solid #333;background: #fff;left: 20px;top:"+offset+"px; z-index: 5;overflow: visible;'> \
-	 				<h3> "+loc.data("channel_name")+" (Preview) <span class='xout' style='float:right; cursor: pointer;'> X </span></h3> \
+	 				<h3> "+channel_name+" (Preview) <span class='xout' style='float:right; cursor: pointer;'> X </span></h3> \
 	 				<div id='player'></div> \
 	 				<p> <a href='"+url+"'> Switch to this stream </a> </p> \
 	 			</div>";
