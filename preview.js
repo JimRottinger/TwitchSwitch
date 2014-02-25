@@ -25,7 +25,12 @@ function insert_user_follows_into_page(username) {
     var url = "http://api.twitch.tv/kraken/users/"+username+"/follows/channels?limit=24&offset=0&on_site=1";
     JSON.load(url, function(data) {
     	var i;
-    	if (data.follows.length > 5){
+    	if (data.follows.length == 0){
+    		var li = "<li class='preview_li' style='height=35px; position: relative; margin-left: 30px;'> No followed streams </li>"
+    		document.getElementById("channel_previews").innerHTML += li;
+    		document.getElementById("preview_dropdown_link").style.display='none';
+    	}
+    	else if (data.follows.length > 5){
 	    	for (i=0; i < 5; i++){
 	    		var channel = data.follows[i].channel;
 	            document.getElementById("channel_previews").innerHTML += draw_preview_link(channel);
@@ -40,6 +45,7 @@ function insert_user_follows_into_page(username) {
 		            var channel = data.follows[i].channel;
 		            document.getElementById("channel_previews").innerHTML += draw_preview_link(channel);
 		        }
+		    document.getElementById("preview_dropdown_link").style.display='none';
 	    }
     });
 }
