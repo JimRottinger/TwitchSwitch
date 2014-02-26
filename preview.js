@@ -122,13 +122,19 @@ function get_username() {
     return elements[0].textContent;
 }
 
-var generate_embed_object_for_stream = function(channel){
-	return 	"<object type='application/x-shockwave-flash' height='213' width='350' id='live_embed_player_flash' \
-			data='http://www.twitch.tv/widgets/live_embed_player.swf?channel="+channel+"' \
-			bgcolor='#000000'><param name='allowFullScreen' value='true' /> \
-			<param name='allowScriptAccess' value='always' /><param name='allowNetworking' value='all' /> \
-			<param name='movie' value='http://www.twitch.tv/widgets/live_embed_player.swf' /> \
-			<param name='flashvars' value='hostname=www.twitch.tv&channel="+channel+"&auto_play=true&start_volume=0' /></object>";
+var generate_embed_object_for_stream = function(channel_name){
+    return '<object type="application/x-shockwave-flash" \
+    height="213" \
+    width="350" \
+    id="live_embed_player_flash" \
+    data="http://www.twitch.tv/widgets/live_embed_player.swf?channel='+channel_name+'" \
+    bgcolor="#000000">\
+        <param  name="allowFullScreen"   value="false" />\
+        <param  name="allowScriptAccess" value="always" />\
+        <param  name="allowNetworking"   value="all" />\
+        <param  name="movie"             value="http://www.twitch.tv/widgets/live_embed_player.swf" />\
+        <param  name="flashvars"         value="hostname=www.twitch.tv&channel='+channel_name+'&auto_play=true&start_volume=0" />\
+    </object>';
 };
 
 /** Pops up the video next to the preview link that was clicked */
