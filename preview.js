@@ -192,6 +192,7 @@ $("#nav").on("click", ".left-col-dropdown.expanded", function(){
 });
 
 var username = get_username();
+var limit = 75;
 if (username) {
 	var follow_nav = 		"<div class='nav_section js-nav-menu' id='nav_preview'> \
 							<div class='header'>Preview</div> \
@@ -204,13 +205,11 @@ if (username) {
     (function update() {
         get_follows(username, function(follows) {
             // only filter for a small number to save the API
-            if (follows.length < 75) {
                 filter_follows_online(follows, function(filtered) {
+                    if (filtered.length > limit)
+                        filtered = filtered.slice(0,limit);
                     insert_follows_into_page(filtered);
                 });
-            } else {
-                insert_follows_into_page(filtered);
-            }
         });
         // re-update every _ milliseconds
         window.setTimeout(update, 30000);
