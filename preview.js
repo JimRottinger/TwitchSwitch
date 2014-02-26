@@ -44,13 +44,18 @@ function draw_preview_link(channel){
 
 /** Obtains a list of channels followed by a user */
 function get_follows(username, callback) {
-    var url = "http://api.twitch.tv/kraken/users/"+username+"/follows/channels?limit=75&offset=0&on_site=1";
-    JSON.load(url, function(data) {
-        var channels = [];
+    var channels = [];
+    function handler(data) {
+        if (!data || !data.follows || data.follows.length == 0) {
+            callback(channels);
+            return;
+        }
         for (var i = 0; i < data.follows.length; i++)
             channels.push(data.follows[i].channel);
-        callback(channels);
-    });
+        JSON.load(data._links.next, handler);
+    }
+    var url = "https://api.twitch.tv/kraken/users/"+username+"/follows/channels?limit=75&offset=0&on_site=1";
+    JSON.load(url, handler);
 }
 
 /** Filter out only the channels that are online */
@@ -60,7 +65,7 @@ function filter_follows_online(channels, callback) {
         filtered[channels[i].name] = true;
     var okay = [];
     function handler(data) {
-        if (data.streams.length == 0) {
+        if (!data || !data.streams || data.streams.length == 0) {
             callback(okay);
             return;
         }
@@ -72,7 +77,7 @@ function filter_follows_online(channels, callback) {
                 okay.push(channels[i]);
         JSON.load(data._links.next, handler);
     }
-    var url = "https://api.twitch.tv/kraken/streams?channel=";
+    var url = "https://api.twitch.tv/kraken/streams?limit=75&channel=";
     for (var i = 0; i < channels.length; i++)
         url += channels[i].name + ",";
     JSON.load(url, handler);
