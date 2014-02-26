@@ -44,7 +44,7 @@ function draw_preview_link(channel){
 
 /** Obtains a list of channels followed by a user */
 function get_follows(username, callback) {
-    var url = "http://api.twitch.tv/kraken/users/"+username+"/follows/channels?limit=24&offset=0&on_site=1";
+    var url = "http://api.twitch.tv/kraken/users/"+username+"/follows/channels?limit=75&offset=0&on_site=1";
     JSON.load(url, function(data) {
         var channels = [];
         for (var i = 0; i < data.follows.length; i++)
@@ -190,7 +190,6 @@ if (username) {
 						</div>";
 	$("#nav_primary").before(follow_nav);
     (function update() {
-        var url = "http://api.twitch.tv/kraken/users/"+username+"/follows/channels?limit=24&offset=0&on_site=1";
         get_follows(username, function(follows) {
             // only filter for a small number to save the API
             if (follows.length < 75) {
