@@ -3,11 +3,14 @@
 
 	"name": "TwitchSwitch",
 	"description": "Allows previews of twitch channels from another stream's page",
-	"version": "1.1.1",
+	"version": "1.1.2",
+  "author": "James Rottinger",
+
 	"background": {
 		"scripts": ["background.js"],
 		"persistent": false
 	},
+  
 	"content_scripts": [
 	{
 		"matches": ["*://*.twitch.tv/*"],
