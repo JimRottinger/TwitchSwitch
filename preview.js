@@ -25,7 +25,11 @@ function draw_preview_link(channel){
     a.setAttribute("data-channel_name", channel.name);
     a.setAttribute("data-channel_dname", channel.display_name);
     a.addEventListener("click", function(event) {
-	popup_video($("#preview_link_" + channel.name));
+        var popup = document.getElementById("popup");
+        if (popup && popup.getAttribute("channel_name") === channel.name)
+            document.getElementById("main_col").removeChild(popup);
+        else
+	    popup_video($("#preview_link_" + channel.name));
     });
     // add the image
     var img = document.createElement("img");
@@ -144,6 +148,7 @@ var popup_video = function(preview_clicked){
     popup.id = "popup";
     popup.className = "popup";
     popup.style.cssText = "position:absolute;padding:12px;border:2px solid #333;background:#fff;left:0px;top:"+offset+"px;z-index:5;";
+    popup.setAttribute("channel_name", channel_name);
     // create an 'x' button to close the popup
     var span = document.createElement("span");
     span.style.cssText = "position:absolute;top:1ex;right:1ex;font-weight:bold;cursor:pointer;";
@@ -169,10 +174,6 @@ var popup_video = function(preview_clicked){
     document.getElementById("main_col").appendChild(popup);
 };
 
-// remove a popup when its xout is clicked
-$("#main_col").on("click", '.xout', function(){
-	$(".popup").remove();
-});
 // dropdown extea prewview links on click of 
 $("#nav").on("click", "#preview_dropdown_link", function(){
 	$("#extra_previews").css("height", "auto");
