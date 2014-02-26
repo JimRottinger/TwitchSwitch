@@ -25,7 +25,11 @@ function draw_preview_link(channel){
     a.setAttribute("data-channel_name", channel.name);
     a.setAttribute("data-channel_dname", channel.display_name);
     a.addEventListener("click", function(event) {
-	popup_video($("#preview_link_" + channel.name));
+        var popup = document.getElementById("popup");
+        if (popup && popup.getAttribute("channel_name") === channel.name)
+            document.getElementById("main_col").removeChild(popup);
+        else
+	    popup_video($("#preview_link_" + channel.name));
     });
     // add the image
     var img = document.createElement("img");
@@ -44,13 +48,18 @@ function draw_preview_link(channel){
 
 /** Obtains a list of channels followed by a user */
 function get_follows(username, callback) {
-    var url = "http://api.twitch.tv/kraken/users/"+username+"/follows/channels?limit=75&offset=0&on_site=1";
-    JSON.load(url, function(data) {
-        var channels = [];
+    var channels = [];
+    function handler(data) {
+        if (!data || !data.follows || data.follows.length == 0) {
+            callback(channels);
+            return;
+        }
         for (var i = 0; i < data.follows.length; i++)
             channels.push(data.follows[i].channel);
-        callback(channels);
-    });
+        JSON.load(data._links.next, handler);
+    }
+    var url = "https://api.twitch.tv/kraken/users/"+username+"/follows/channels?limit=75&offset=0&on_site=1";
+    JSON.load(url, handler);
 }
 
 /** Filter out only the channels that are online */
@@ -60,7 +69,7 @@ function filter_follows_online(channels, callback) {
         filtered[channels[i].name] = true;
     var okay = [];
     function handler(data) {
-        if (data.streams.length == 0) {
+        if (!data || !data.streams || data.streams.length == 0) {
             callback(okay);
             return;
         }
@@ -72,7 +81,7 @@ function filter_follows_online(channels, callback) {
                 okay.push(channels[i]);
         JSON.load(data._links.next, handler);
     }
-    var url = "https://api.twitch.tv/kraken/streams?channel=";
+    var url = "https://api.twitch.tv/kraken/streams?limit=75&channel=";
     for (var i = 0; i < channels.length; i++)
         url += channels[i].name + ",";
     JSON.load(url, handler);
@@ -113,13 +122,19 @@ function get_username() {
     return elements[0].textContent;
 }
 
-var generate_embed_object_for_stream = function(channel){
-	return 	"<object type='application/x-shockwave-flash' height='213' width='350' id='live_embed_player_flash' \
-			data='http://www.twitch.tv/widgets/live_embed_player.swf?channel="+channel+"' \
-			bgcolor='#000000'><param name='allowFullScreen' value='true' /> \
-			<param name='allowScriptAccess' value='always' /><param name='allowNetworking' value='all' /> \
-			<param name='movie' value='http://www.twitch.tv/widgets/live_embed_player.swf' /> \
-			<param name='flashvars' value='hostname=www.twitch.tv&channel="+channel+"&auto_play=true&start_volume=0' /></object>";
+var generate_embed_object_for_stream = function(channel_name){
+    return '<object type="application/x-shockwave-flash" \
+    height="213" \
+    width="350" \
+    id="live_embed_player_flash" \
+    data="http://www.twitch.tv/widgets/live_embed_player.swf?channel='+channel_name+'" \
+    bgcolor="#000000">\
+        <param  name="allowFullScreen"   value="false" />\
+        <param  name="allowScriptAccess" value="always" />\
+        <param  name="allowNetworking"   value="all" />\
+        <param  name="movie"             value="http://www.twitch.tv/widgets/live_embed_player.swf" />\
+        <param  name="flashvars"         value="hostname=www.twitch.tv&channel='+channel_name+'&auto_play=true&start_volume=0" />\
+    </object>';
 };
 
 /** Pops up the video next to the preview link that was clicked */
@@ -139,6 +154,7 @@ var popup_video = function(preview_clicked){
     popup.id = "popup";
     popup.className = "popup";
     popup.style.cssText = "position:absolute;padding:12px;border:2px solid #333;background:#fff;left:0px;top:"+offset+"px;z-index:5;";
+    popup.setAttribute("channel_name", channel_name);
     // create an 'x' button to close the popup
     var span = document.createElement("span");
     span.style.cssText = "position:absolute;top:1ex;right:1ex;font-weight:bold;cursor:pointer;";
@@ -164,10 +180,6 @@ var popup_video = function(preview_clicked){
     document.getElementById("main_col").appendChild(popup);
 };
 
-// remove a popup when its xout is clicked
-$("#main_col").on("click", '.xout', function(){
-	$(".popup").remove();
-});
 // dropdown extea prewview links on click of 
 $("#nav").on("click", "#preview_dropdown_link", function(){
 	$("#extra_previews").css("height", "auto");
