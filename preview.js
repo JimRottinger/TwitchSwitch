@@ -171,7 +171,7 @@ var popup_video = function(preview_clicked){
     h3.appendChild(document.createTextNode(" (Preview)"));
     // create the player object
     var player = document.createElement("div");
-    player.id = player;
+    player.id = "preview-"+channel_name;
     player.innerHTML = generate_embed_object_for_stream(channel_name);
     // place the popup on screen
     popup.appendChild(span);
