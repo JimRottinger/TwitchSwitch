@@ -193,17 +193,6 @@ function expand_or_collapse_extra_follows(){
     }
 }
 
-// // dropdown extea prewview links on click of 
-// $("#nav").on("click", "#preview_dropdown_link", function(){
-// 	$("#extra_previews").css("height", "auto");
-// 	$("#preview_dropdown_link").removeClass("collapsed").addClass("expanded");
-// });
-// // collapses the dropdown for the preview links
-// $("#nav").on("click", ".left-col-dropdown.expanded", function(){
-// 	$("#extra_previews").css("height", "0px");
-// 	$("#preview_dropdown_link").removeClass("expanded").addClass("collapsed");
-// });
-
 var username = get_username();
 var limit = 100;
 if (username) {
