@@ -124,11 +124,33 @@ function insert_button_into_collapsed_sidebar(){
     var a = document.createElement("a");
     a.className = "preview_icon";
     a.href = '#';
-    var button_image = document.createElement("span");
-    button_image.style.cssText = "background:url('"+imgURL+"') no-repeat 0 0;";
+    a.style.cssText = "text-indent: 9px;";
+    var button_image = document.createElement("img");
+    button_image.src = imgURL;
+    button_image.width = "32";
+    button_image.height = "32";
+    button_image.style.cssText = "margin-top: 12px;";
     a.appendChild(button_image);
     button.appendChild(a);
+    button.addEventListener("click", build_flyout_preview_tab, false);
     sidebar.insertBefore(button, button_to_insert_before);
+}
+
+function build_flyout_preview_tab(){
+    console.log("Building preview tab");
+    var flyout = document.getElementById("flyout");
+    var pointer = flyout.getElementsByClassName("point")[0];
+    var content = flyout.getElementsByClassName("content")[0];
+    if (flyout.style.display == "block"){
+        flyout.style.display = 'none';
+        content.innerHTML = "";
+    }
+    else{
+        pointer.style.top = "112px";
+        content.appendChild(document.createTextNode("Preview Tab"));
+        content.style.top = "105px";
+        flyout.style.display='block';
+    }
 }
 
 /** Scrapes the username out of the webpage and returns it */

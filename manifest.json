@@ -28,5 +28,6 @@
   	},
   	"permissions": [
             "declarativeContent"
-  	]
+  	],
+  	"web_accessible_resources": ["icons/gray_icon_128.png"]
 }
