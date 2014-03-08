@@ -114,6 +114,23 @@ function insert_follows_into_page(channels) {
     }
 }
 
+function insert_button_into_collapsed_sidebar(){
+    var sidebar = document.getElementById("nav_small").getElementsByTagName("UL")[0];
+    var button_to_insert_before = sidebar.getElementsByClassName("game_filter")[0];
+    var button = document.createElement("li");
+    button.className = "game_filter clearfix";
+    button.id = "preview_small";
+    var imgURL = chrome.extension.getURL("icons/gray_icon_128.png");
+    var a = document.createElement("a");
+    a.className = "preview_icon";
+    a.href = '#';
+    var button_image = document.createElement("span");
+    button_image.style.cssText = "background:url('"+imgURL+"') no-repeat 0 0;";
+    a.appendChild(button_image);
+    button.appendChild(a);
+    sidebar.insertBefore(button, button_to_insert_before);
+}
+
 /** Scrapes the username out of the webpage and returns it */
 function get_username() {
     var elements = document.getElementById("you").getElementsByClassName("username");
@@ -202,6 +219,7 @@ if (username) {
 							<div class='nav-divider'></div> \
 						</div>";
 	$("#nav_primary").before(follow_nav);
+    insert_button_into_collapsed_sidebar();
     (function update() {
         get_follows(username, function(follows) {
             if (follows.length > limit)
