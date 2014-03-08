@@ -231,9 +231,9 @@ if (username) {
     follow_nav.appendChild(dropdown);
     follow_nav.appendChild(divider);
 
-    var parent_nav = document.getElementsByClassName("tse-content")[0];
-    parent_nav.insertBefore(follow_nav, parent_nav.getElementsByClassName("nav_primary")[0]);
-	$("#nav_primary").before(follow_nav);
+    var node_to_insert_before = document.getElementById("nav_primary");
+    node_to_insert_before.parentNode.insertBefore(follow_nav, node_to_insert_before);
+
     (function update() {
         get_follows(username, function(follows) {
             if (follows.length > limit)
