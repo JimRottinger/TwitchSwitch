@@ -35,6 +35,8 @@ function draw_preview_link(channel){
     var img = document.createElement("img");
     img.className = "image";
     img.src = channel.logo ? channel.logo : "http://static-cdn.jtvnw.net/jtv_user_pictures/xarth/404_user_150x150.png";
+    img.height = "18";
+    img.width = "18";
     // add the name of the stream
     var span = document.createElement("span");
     span.className = "title";
@@ -124,12 +126,12 @@ function insert_button_into_collapsed_sidebar(){
     var a = document.createElement("a");
     a.className = "preview_icon";
     a.href = '#';
-    a.style.cssText = "text-indent: 9px;";
+    a.style.cssText = "text-indent: 11px;";
     var button_image = document.createElement("img");
     button_image.src = imgURL;
-    button_image.width = "32";
-    button_image.height = "32";
-    button_image.style.cssText = "margin-top: 12px;";
+    button_image.width = "28";
+    button_image.height = "28";
+    button_image.style.cssText = "margin-top: 14px;";
     a.appendChild(button_image);
     button.appendChild(a);
     button.addEventListener("click", build_flyout_preview_tab, false);
@@ -137,19 +139,29 @@ function insert_button_into_collapsed_sidebar(){
 }
 
 function build_flyout_preview_tab(){
-    console.log("Building preview tab");
     var flyout = document.getElementById("flyout");
     var pointer = flyout.getElementsByClassName("point")[0];
     var content = flyout.getElementsByClassName("content")[0];
     if (flyout.style.display == "block"){
+        console.log("turning preview tab off")
         flyout.style.display = 'none';
         content.innerHTML = "";
     }
     else{
+        console.log("turning preview tab on")
         pointer.style.top = "112px";
-        content.appendChild(document.createTextNode("Preview Tab"));
-        content.style.top = "105px";
-        flyout.style.display='block';
+        content.style.cssText= "top: 105px; height: auto: width: auto;";
+        get_follows(get_username(), function(follows) {
+            console.log(follows);
+            filter_follows_online(follows, function(filtered) {
+                console.log(filtered);
+                var i = 0;
+                for (i; i < filtered.length; i=i+1){
+                    content.appendChild(draw_preview_link(filtered[i]))
+                }
+            });
+        });        
+        flyout.style.cssText = "display: block";
     }
 }
 
