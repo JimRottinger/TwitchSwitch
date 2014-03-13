@@ -253,7 +253,7 @@ var popup_video = function(preview_clicked){
     h3.appendChild(document.createTextNode(" (Preview)"));
     // create the player object
     var player = document.createElement("div");
-    player.id = player;
+    player.id = "preview-"+channel_name;
     player.innerHTML = generate_embed_object_for_stream(channel_name);
     // place the popup on screen
     popup.appendChild(span);
@@ -262,29 +262,61 @@ var popup_video = function(preview_clicked){
     document.getElementById("main_col").appendChild(popup);
 };
 
-// dropdown extea prewview links on click of 
-$("#nav").on("click", "#preview_dropdown_link", function(){
-	$("#extra_previews").css("height", "auto");
-	$("#preview_dropdown_link").removeClass("collapsed").addClass("expanded");
-});
-// collapses the dropdown for the preview links
-$("#nav").on("click", ".left-col-dropdown.expanded", function(){
-	$("#extra_previews").css("height", "0px");
-	$("#preview_dropdown_link").removeClass("expanded").addClass("collapsed");
-});
+function expand_or_collapse_extra_follows(){
+    var extra_menu = document.getElementById("extra_previews");
+    var dropdown_button = document.getElementById("preview_dropdown_link");
+    if (extra_menu.style.height == 'auto'){
+        extra_menu.style.height = '0';
+        dropdown_button.className = 'left-col-dropdown collapsed';
+    }
+    else{
+       extra_menu.style.height = 'auto'; 
+       dropdown_button.className += "left-col-dropdown expanded";
+    }
+}
 
 var username = get_username();
 var limit = 100;
 if (username) {
-	var follow_nav = 		"<div class='nav_section js-nav-menu' id='nav_preview'> \
-							<div class='header'>Preview</div> \
-							<ul class='game_filters' id = 'channel_previews'></ul> \
-							<ul class='extra-menu' id='extra_previews'></ul> \
-							<div class='left-col-dropdown collapsed' id='preview_dropdown_link' style='display:none;'></div> \
-							<div class='nav-divider'></div> \
-						</div>";
-	$("#nav_primary").before(follow_nav);
+    /* Building the following html
+	<div class='nav_section js-nav-menu' id='nav_preview'> 
+		<div class='header'>Preview</div> 
+		<ul class='game_filters' id = 'channel_previews'></ul> 
+		<ul class='extra-menu' id='extra_previews'></ul> 
+		<div class='left-col-dropdown collapsed' id='preview_dropdown_link' style='display:none;'></div> 
+		<div class='nav-divider'></div> 
+	</div>*/
+    var follow_nav = document.createElement("DIV");
+    follow_nav.id = "nav_preview";
+    follow_nav.className = "nav_section js-nav-menu";
+    var header = document.createElement("DIV");
+    header.className = 'header';
+    header.appendChild(document.createTextNode('Preview'));
+    follow_nav.appendChild(header);
+    var follow_list = document.createElement("UL");
+    follow_list.id='channel_previews';
+    follow_list.className='game_filters';
+    follow_list.style.cssText = 'max-height: 240px;';
+    follow_nav.appendChild(follow_list)
+    var hidden_follow_list = document.createElement("UL");
+    hidden_follow_list.id = "extra_previews";
+    hidden_follow_list.style.cssText="min-height:0;height:0;overflow:hidden";
+    //hidden_follow_list.className = 'extra-menu';
+    follow_nav.appendChild(hidden_follow_list);
+    var dropdown = document.createElement("DIV");
+    dropdown.id="preview_dropdown_link";
+    dropdown.className='left-col-dropdown collapsed';
+    dropdown.style.display = 'none';
+    dropdown.addEventListener('click', expand_or_collapse_extra_follows, false);
+    var divider = document.createElement("DIV");
+    divider.className='nav-divider';
+    follow_nav.appendChild(dropdown);
+    follow_nav.appendChild(divider);
+
+    var node_to_insert_before = document.getElementById("nav_primary");
+    node_to_insert_before.parentNode.insertBefore(follow_nav, node_to_insert_before);
     insert_button_into_collapsed_sidebar();
+
     (function update() {
         get_follows(username, function(follows) {
             if (follows.length > limit)
