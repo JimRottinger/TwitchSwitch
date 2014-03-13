@@ -54,13 +54,13 @@ function draw_load_spinner(){
         length: 4,
         width: 5,
         radius: 7,
-        trail: 4,
+        trail: 10,
         speed: 0.9,
         color: '#fff',
-        top: '20px',
-        left: '20px'
+        top: '60px',
+        left: '100px'
     }
-    return new Spinner(opts);
+    return (new Spinner(opts).spin());
 }
 
 /** Obtains a list of channels followed by a user */
@@ -149,11 +149,14 @@ function insert_button_into_collapsed_sidebar(){
     button_image.style.cssText = "margin-top: 14px;";
     a.appendChild(button_image);
     button.appendChild(a);
-    button.addEventListener("click", build_flyout_preview_tab, false);
+    button.addEventListener("click", function(event){
+        build_flyout_preview_tab(event);
+    });
     sidebar.insertBefore(button, button_to_insert_before);
 }
 
-function build_flyout_preview_tab(){
+function build_flyout_preview_tab(event){
+    console.log(event);
     var flyout = document.getElementById("flyout");
     var pointer = flyout.getElementsByClassName("point")[0];
     var content = flyout.getElementsByClassName("content")[0];
@@ -163,30 +166,41 @@ function build_flyout_preview_tab(){
     else{
         console.log("turning preview tab on")
         pointer.style.top = "112px";
-        content.style.cssText= "top: 105px; height: auto; min-height: 60px; width: auto; min-width: 60px;";
+        content.style.cssText= "top: 105px; height: auto; min-height: 100px; width: auto; min-width: 200px;";
         flyout.style.cssText = "display: block";
         var preview_title = document.createElement("H3");
-        preview_title.style.cssText = "font-size: 1.4em; line-height: 2.0em; color: #999; float: left;";
+        preview_title.style.cssText = "font-size: 1.4em; line-height: 2.0em; color: #5f5f5f; float: left;";
         preview_title.appendChild(document.createTextNode("Preview"));
         var x_out = document.createElement("H3");
-        x_out.style.cssText = "font-size: 1.4em; line-height: 2.0em; color: #999; float: right;";
+        x_out.style.cssText = "font-size: 1.4em; line-height: 2.0em; color: #5f5f5f; float: right; cursor: pointer;";
         x_out.appendChild(document.createTextNode("X"));
-        console.log(x_out.queue());
-        x_out.addEventListener("click", hide_preview_tab(flyout, content), false);
+        x_out.addEventListener("click", function(event){
+            hide_preview_tab(flyout, content);
+        });
         content.appendChild(preview_title);
         content.appendChild(x_out);
         var preview_list = document.createElement("UL");
-        var spinner = draw_load_spinner().spin();
-        content.appendChild(spinner.el);
+        preview_list.style.cssText = "clear: both; list-style: none;"
+        content.appendChild(preview_list);
+        var spinner = draw_load_spinner();
+        spinner.el.style.left = "100px";
+        spinner.el.style.top = "60px";
+        preview_list.appendChild(spinner.el);
+        console.log(preview_list);
         get_follows(get_username(), function(follows) {
             filter_follows_online(follows, function(filtered) {
                 var i = 0;
                 for (i; i < filtered.length; i=i+1){
-                    content.appendChild(draw_preview_link(filtered[i]))
+                    var li = draw_preview_link(filtered[i]);
+                    li.style.cssText = "margin-bottom: 6px;";
+                    li.getElementsByClassName("image")[0].style.cssText="padding-right: 6px";
+                    li.getElementsByClassName("title")[0].style.color = "#999";
+                    console.log(li);
+                    preview_list.appendChild(li);
                 }
+                spinner.stop();
             });
-        });   
-        spinner.stop();     
+        });     
     }
 }
 
@@ -307,7 +321,9 @@ if (username) {
     dropdown.id="preview_dropdown_link";
     dropdown.className='left-col-dropdown collapsed';
     dropdown.style.display = 'none';
-    dropdown.addEventListener('click', expand_or_collapse_extra_follows, false);
+    dropdown.addEventListener('click', function(event){
+        expand_or_collapse_extra_follows();
+    });
     var divider = document.createElement("DIV");
     divider.className='nav-divider';
     follow_nav.appendChild(dropdown);
