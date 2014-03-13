@@ -184,7 +184,6 @@ function build_flyout_preview_tab(event){
         spinner.el.style.left = "100px";
         spinner.el.style.top = "60px";
         preview_list.appendChild(spinner.el);
-        console.log(preview_list);
         get_follows(get_username(), function(follows) {
             filter_follows_online(follows, function(filtered) {
                 var i = 0;
@@ -193,7 +192,6 @@ function build_flyout_preview_tab(event){
                     li.style.cssText = "margin-bottom: 6px;";
                     li.getElementsByClassName("image")[0].style.cssText="padding-right: 6px";
                     li.getElementsByClassName("title")[0].style.color = "#999";
-                    console.log(li);
                     preview_list.appendChild(li);
                 }
                 spinner.stop();
@@ -202,8 +200,7 @@ function build_flyout_preview_tab(event){
         //add event listener to remove flyout pop-up on side-bar expansion
         var collapse_button = document.getElementById("left_close");
         collapse_button.addEventListener("click", function(event){
-            flyout.style.display = 'none';
-            content.innerHTML = "";
+            hide_preview_tab(flyout, content);
         });
         //add the active style to the sidebar button
         document.getElementById("preview_small").className = "selected game_filter clearfix";
