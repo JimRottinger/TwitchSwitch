@@ -48,6 +48,21 @@ function draw_preview_link(channel){
     return li;
 }
 
+function draw_load_spinner(){
+    var opts = {
+        lines: 10,
+        length: 4,
+        width: 5,
+        radius: 7,
+        trail: 4,
+        speed: 0.9,
+        color: '#fff',
+        top: '20px',
+        left: '20px'
+    }
+    return new Spinner(opts);
+}
+
 /** Obtains a list of channels followed by a user */
 function get_follows(username, callback) {
     var channels = [];
@@ -143,26 +158,42 @@ function build_flyout_preview_tab(){
     var pointer = flyout.getElementsByClassName("point")[0];
     var content = flyout.getElementsByClassName("content")[0];
     if (flyout.style.display == "block"){
-        console.log("turning preview tab off")
-        flyout.style.display = 'none';
-        content.innerHTML = "";
+        hide_preview_tab(flyout, content);
     }
     else{
         console.log("turning preview tab on")
         pointer.style.top = "112px";
         content.style.cssText= "top: 105px; height: auto; min-height: 60px; width: auto; min-width: 60px;";
+        flyout.style.cssText = "display: block";
+        var preview_title = document.createElement("H3");
+        preview_title.style.cssText = "font-size: 1.4em; line-height: 2.0em; color: #999; float: left;";
+        preview_title.appendChild(document.createTextNode("Preview"));
+        var x_out = document.createElement("H3");
+        x_out.style.cssText = "font-size: 1.4em; line-height: 2.0em; color: #999; float: right;";
+        x_out.appendChild(document.createTextNode("X"));
+        console.log(x_out.queue());
+        x_out.addEventListener("click", hide_preview_tab(flyout, content), false);
+        content.appendChild(preview_title);
+        content.appendChild(x_out);
+        var preview_list = document.createElement("UL");
+        var spinner = draw_load_spinner().spin();
+        content.appendChild(spinner.el);
         get_follows(get_username(), function(follows) {
-            console.log(follows);
             filter_follows_online(follows, function(filtered) {
-                console.log(filtered);
                 var i = 0;
                 for (i; i < filtered.length; i=i+1){
                     content.appendChild(draw_preview_link(filtered[i]))
                 }
             });
-        });        
-        flyout.style.cssText = "display: block";
+        });   
+        spinner.stop();     
     }
+}
+
+function hide_preview_tab(flyout, content){
+    console.log("turning preview tab off")
+    flyout.style.display = 'none';
+    content.innerHTML = "";
 }
 
 /** Scrapes the username out of the webpage and returns it */
