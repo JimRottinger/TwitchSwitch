@@ -156,7 +156,6 @@ function insert_button_into_collapsed_sidebar(){
 }
 
 function build_flyout_preview_tab(event){
-    console.log(event);
     var flyout = document.getElementById("flyout");
     var pointer = flyout.getElementsByClassName("point")[0];
     var content = flyout.getElementsByClassName("content")[0];
@@ -164,7 +163,6 @@ function build_flyout_preview_tab(event){
         hide_preview_tab(flyout, content);
     }
     else{
-        console.log("turning preview tab on")
         pointer.style.top = "112px";
         content.style.cssText= "top: 105px; height: auto; min-height: 100px; width: auto; min-width: 200px;";
         flyout.style.cssText = "display: block";
@@ -200,14 +198,22 @@ function build_flyout_preview_tab(event){
                 }
                 spinner.stop();
             });
-        });     
+        });
+        //add event listener to remove flyout pop-up on side-bar expansion
+        var collapse_button = document.getElementById("left_close");
+        collapse_button.addEventListener("click", function(event){
+            flyout.style.display = 'none';
+            content.innerHTML = "";
+        });
+        //add the active style to the sidebar button
+        document.getElementById("preview_small").className = "selected game_filter clearfix";
     }
 }
 
 function hide_preview_tab(flyout, content){
-    console.log("turning preview tab off")
     flyout.style.display = 'none';
     content.innerHTML = "";
+    document.getElementById("preview_small").className="game_filter clearfix";
 }
 
 /** Scrapes the username out of the webpage and returns it */
