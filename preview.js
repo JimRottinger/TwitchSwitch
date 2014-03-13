@@ -150,7 +150,7 @@ function build_flyout_preview_tab(){
     else{
         console.log("turning preview tab on")
         pointer.style.top = "112px";
-        content.style.cssText= "top: 105px; height: auto: width: auto;";
+        content.style.cssText= "top: 105px; height: auto; min-height: 60px; width: auto; min-width: 60px;";
         get_follows(get_username(), function(follows) {
             console.log(follows);
             filter_follows_online(follows, function(filtered) {
