@@ -12,6 +12,48 @@ JSON.load = function(url, callback) {
 };
 
 (function(){
+
+/** Draws the preview tab into the navigation bar on the left side of the page */
+function draw_preview_tab_in_nav_bar(){
+    /* Building the following html
+    <div class='nav_section js-nav-menu' id='nav_preview'> 
+        <div class='header'>Preview</div> 
+        <ul class='game_filters' id = 'channel_previews'></ul> 
+        <ul class='extra-menu' id='extra_previews'></ul> 
+        <div class='left-col-dropdown collapsed' id='preview_dropdown_link' style='display:none;'></div> 
+        <div class='nav-divider'></div> 
+    </div>*/
+    var follow_nav = document.createElement("DIV");
+    follow_nav.id = "nav_preview";
+    follow_nav.className = "nav_section js-nav-menu";
+    var header = document.createElement("DIV");
+    header.className = 'header';
+    header.appendChild(document.createTextNode('Preview'));
+    follow_nav.appendChild(header);
+    var follow_list = document.createElement("UL");
+    follow_list.id='channel_previews';
+    follow_list.className='game_filters';
+    follow_list.style.cssText = 'max-height: 240px;';
+    follow_nav.appendChild(follow_list);
+    var hidden_follow_list = document.createElement("UL");
+    hidden_follow_list.id = "extra_previews";
+    hidden_follow_list.style.cssText="min-height:0;height:0;overflow:hidden";
+    //hidden_follow_list.className = 'extra-menu';
+    follow_nav.appendChild(hidden_follow_list);
+    var dropdown = document.createElement("DIV");
+    dropdown.id="preview_dropdown_link";
+    dropdown.className='left-col-dropdown collapsed';
+    dropdown.style.display = 'none';
+    dropdown.addEventListener('click', function(event){
+        expand_or_collapse_extra_follows();
+    });
+    var divider = document.createElement("DIV");
+    divider.className='nav-divider';
+    follow_nav.appendChild(dropdown);
+    follow_nav.appendChild(divider);
+    return follow_nav;    
+}    
+
 /** Draws the link into the sidebar for every followed user */
 function draw_preview_link(channel){
     // create the list element
@@ -59,7 +101,7 @@ function draw_load_spinner(){
         color: '#fff',
         top: '60px',
         left: '100px'
-    }
+    };
     return (new Spinner(opts).spin());
 }
 
@@ -67,7 +109,7 @@ function draw_load_spinner(){
 function get_follows(username, callback) {
     var channels = [];
     function handler(data) {
-        if (!data || !data.follows || data.follows.length == 0) {
+        if (!data || !data.follows || data.follows.length === 0) {
             callback(channels);
             return;
         }
@@ -86,7 +128,7 @@ function filter_follows_online(channels, callback) {
         filtered[channels[i].name] = true;
     var okay = [];
     function handler(data) {
-        if (!data || !data.streams || data.streams.length == 0) {
+        if (!data || !data.streams || data.streams.length === 0) {
             callback(okay);
             return;
         }
@@ -112,7 +154,7 @@ function insert_follows_into_page(channels) {
     while (blist.firstChild) blist.removeChild(list.firstChild);
     while (list.firstChild) list.removeChild(list.firstChild);
     document.getElementById("preview_dropdown_link").style.display='none';
-    if (channels.length == 0){
+    if (channels.length === 0){
         var li = document.createElement("li");
         li.style.textAlign = "center";
         li.appendChild(document.createTextNode("No followed streams are online"));
@@ -157,15 +199,20 @@ function insert_button_into_collapsed_sidebar(){
 
 function build_flyout_preview_tab(event){
     var flyout = document.getElementById("flyout");
+    console.log(flyout);
     var pointer = flyout.getElementsByClassName("point")[0];
     var content = flyout.getElementsByClassName("content")[0];
+    console.log("building tab");
     if (flyout.style.display == "block"){
+        console.log("hiding tab");
         hide_preview_tab(flyout, content);
     }
     else{
+        console.log("opening tab");
         pointer.style.top = "112px";
         content.style.cssText= "top: 105px; height: auto; min-height: 100px; width: auto; min-width: 200px;";
-        flyout.style.cssText = "display: block";
+        flyout.style.cssText = "left: 50px; display: block";
+        document.getElementById("flyout").style.display = "block";
         var preview_title = document.createElement("H3");
         preview_title.style.cssText = "font-size: 1.4em; line-height: 2.0em; color: #5f5f5f; float: left;";
         preview_title.appendChild(document.createTextNode("Preview"));
@@ -178,7 +225,8 @@ function build_flyout_preview_tab(event){
         content.appendChild(preview_title);
         content.appendChild(x_out);
         var preview_list = document.createElement("UL");
-        preview_list.style.cssText = "clear: both; list-style: none;"
+        preview_list.id = "popout_preview_menu"
+        preview_list.style.cssText = "clear: both; list-style: none;";
         content.appendChild(preview_list);
         var spinner = draw_load_spinner();
         spinner.el.style.left = "100px";
@@ -190,7 +238,7 @@ function build_flyout_preview_tab(event){
                 for (i; i < filtered.length; i=i+1){
                     var li = draw_preview_link(filtered[i]);
                     li.style.cssText = "margin-bottom: 6px;";
-                    li.getElementsByClassName("image")[0].style.cssText="padding-right: 6px";
+                    li.getElementsByClassName("image")[0].style.cssText="margin-right: 8px; border: 1px solid #000;";
                     li.getElementsByClassName("title")[0].style.color = "#999";
                     preview_list.appendChild(li);
                 }
@@ -204,19 +252,27 @@ function build_flyout_preview_tab(event){
         });
         //add the active style to the sidebar button
         document.getElementById("preview_small").className = "selected game_filter clearfix";
+        if (document.getElementById("popup")){
+            document.getElementById("popup").style.left = "215px";
+        }        
     }
+    console.log(flyout);
 }
 
 function hide_preview_tab(flyout, content){
     flyout.style.display = 'none';
+    content.style.cssText = "min-height: 0;"
     content.innerHTML = "";
     document.getElementById("preview_small").className="game_filter clearfix";
+    if (document.getElementById("popup")){
+        document.getElementById("popup").style.left = "0px";
+    }
 }
 
 /** Scrapes the username out of the webpage and returns it */
 function get_username() {
     var elements = document.getElementById("you").getElementsByClassName("username");
-    if (elements.length == 0)
+    if (elements.length === 0)
         return undefined;
     return elements[0].textContent;
 }
@@ -245,6 +301,10 @@ var popup_video = function(preview_clicked){
 	offset = window.innerHeight - 256;
     if (offset < 0)
 	offset = 0;
+    var left_offset = 0;
+    if (document.getElementById("popout_preview_menu")){
+        left_offset = 215;
+    }
     var channel_name = preview_clicked.data('channel_name');
     var channel_dname = preview_clicked.data('channel_dname');
     var url = "http://twitch.tv/"+channel_name;
@@ -252,7 +312,7 @@ var popup_video = function(preview_clicked){
     var popup = document.createElement("div");
     popup.id = "popup";
     popup.className = "popup";
-    popup.style.cssText = "position:absolute;padding:12px;border:2px solid #333;background:#fff;left:0px;top:"+offset+"px;z-index:5;";
+    popup.style.cssText = "position:absolute;padding:12px;border:2px solid #333;background:#fff;left:"+left_offset+"px;top:"+offset+"px;z-index:5;";
     popup.setAttribute("channel_name", channel_name);
     // create an 'x' button to close the popup
     var span = document.createElement("span");
@@ -295,47 +355,12 @@ function expand_or_collapse_extra_follows(){
 var username = get_username();
 var limit = 100;
 if (username) {
-    /* Building the following html
-	<div class='nav_section js-nav-menu' id='nav_preview'> 
-		<div class='header'>Preview</div> 
-		<ul class='game_filters' id = 'channel_previews'></ul> 
-		<ul class='extra-menu' id='extra_previews'></ul> 
-		<div class='left-col-dropdown collapsed' id='preview_dropdown_link' style='display:none;'></div> 
-		<div class='nav-divider'></div> 
-	</div>*/
-    var follow_nav = document.createElement("DIV");
-    follow_nav.id = "nav_preview";
-    follow_nav.className = "nav_section js-nav-menu";
-    var header = document.createElement("DIV");
-    header.className = 'header';
-    header.appendChild(document.createTextNode('Preview'));
-    follow_nav.appendChild(header);
-    var follow_list = document.createElement("UL");
-    follow_list.id='channel_previews';
-    follow_list.className='game_filters';
-    follow_list.style.cssText = 'max-height: 240px;';
-    follow_nav.appendChild(follow_list)
-    var hidden_follow_list = document.createElement("UL");
-    hidden_follow_list.id = "extra_previews";
-    hidden_follow_list.style.cssText="min-height:0;height:0;overflow:hidden";
-    //hidden_follow_list.className = 'extra-menu';
-    follow_nav.appendChild(hidden_follow_list);
-    var dropdown = document.createElement("DIV");
-    dropdown.id="preview_dropdown_link";
-    dropdown.className='left-col-dropdown collapsed';
-    dropdown.style.display = 'none';
-    dropdown.addEventListener('click', function(event){
-        expand_or_collapse_extra_follows();
-    });
-    var divider = document.createElement("DIV");
-    divider.className='nav-divider';
-    follow_nav.appendChild(dropdown);
-    follow_nav.appendChild(divider);
-
+    /** draw/insert navigation bar tab for previews and side bar button */
     var node_to_insert_before = document.getElementById("nav_primary");
-    node_to_insert_before.parentNode.insertBefore(follow_nav, node_to_insert_before);
+    node_to_insert_before.parentNode.insertBefore(draw_preview_tab_in_nav_bar(), document.getElementById("nav_primary"));
     insert_button_into_collapsed_sidebar();
 
+    /** get all follows that are live and insert them into the page */
     (function update() {
         get_follows(username, function(follows) {
             if (follows.length > limit)
@@ -345,7 +370,7 @@ if (username) {
             });
         });
         // re-update every _ milliseconds
-        window.setTimeout(update, 30000);
+        window.setTimeout(update, 15000);
     })();
 } else {
 	console.log("TwitchSwitch: Could not get username (is a user logged in?)");
