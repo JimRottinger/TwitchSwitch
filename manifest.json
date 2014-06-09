@@ -17,17 +17,17 @@
 		"js": ["libs/jquery.min.js", "libs/scriptTagContext.js", "libs/spin.min.js", "preview.js"],
 		"run_at": "document_end"
 	}],
-        "icons": { "16" : "icons/icon_16.png",
-                   "48" : "icons/icon_48.png",
-                   "128": "icons/icon_128.png" },
-  	"page_action": {
-            "default_icon": { "19": "icons/icon_19.png",
-                              "38": "icons/icon_38.png" },
-            "default_title": "TwitchSwitch",
-            "default_popup": "views/dropdown.html"
-  	},
-  	"permissions": [
-            "declarativeContent"
-  	],
-  	"web_accessible_resources": ["icons/gray_icon_128.png"]
+  "icons": { "16" : "icons/icon_16.png",
+             "48" : "icons/icon_48.png",
+             "128": "icons/icon_128.png" },
+	"page_action": {
+          "default_icon": { "19": "icons/icon_19.png",
+                            "38": "icons/icon_38.png" },
+          "default_title": "TwitchSwitch",
+          "default_popup": "views/dropdown.html"
+	},
+	"permissions": [
+          "declarativeContent"
+	],
+	"web_accessible_resources": ["icons/gray_icon_128.png"]
 }
